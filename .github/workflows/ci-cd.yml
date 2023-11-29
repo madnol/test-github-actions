@@ -20,21 +20,21 @@ jobs:
         with:
           name: production-files
           path: ./dist
-# Deploy Job
+ # Deploy Job
   deploy:
-  # Add a dependency to the build job
-  needs: build
-  # Specify runner + deployment step
-  runs-on: ubuntu-latest
-  steps:
-    - name: Download Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: production-files
-        path: ./dist
-    - name: Deploy to Github Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.TEST_CI_CD }}
-        publish_dir: ./dist
+    # Add a dependency to the build job
+    needs: build
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-files
+          path: ./dist
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.CI_CD_TOKEN }}
+          publish_dir: ./dist
     
