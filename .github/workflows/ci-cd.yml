@@ -7,6 +7,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install Node
         uses: actions/setup-node@v3
         with:
@@ -20,6 +28,9 @@ jobs:
         with:
           name: production-files
           path: ./dist
+      - name: Set status to failure if build fails
+        if: failure()
+        run: echo "Build failed" && exit 1
  # Deploy Job
   deploy:
     # Add a dependency to the build job
@@ -27,6 +38,10 @@ jobs:
     # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
