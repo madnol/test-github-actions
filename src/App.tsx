@@ -1,10 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+
+import axios from "axios";
+import Api from "./api";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [fetchingEnv, setFetchingEnv] = useState(true);
+
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    fetchEnviromentVariables();
+  }, []);
+
+  const fetchEnviromentVariables = async () => {
+    try {
+      const { data } = await axios.get("/env");
+      if (data.API_URL) {
+        Api.defaults.baseURL = data.API_URL;
+      }
+    } catch (error) {
+      /* empty */
+    } finally {
+      setFetchingEnv(false);
+    }
+  };
+
+  if (fetchingEnv) return <></>; // Avoid making any api calls before obtaining the enviroment variables
 
   return (
     <>
@@ -29,7 +53,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
